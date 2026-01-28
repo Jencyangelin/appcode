@@ -1,0 +1,8 @@
+
+{
+  "name": "QRSync - Digital Identity",
+  "description": "A sophisticated QR-based digital business card application that lets users create personal profiles and share them instantly via generated QR codes.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
