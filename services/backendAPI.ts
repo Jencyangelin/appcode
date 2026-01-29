@@ -20,7 +20,10 @@ const getAPIBaseURL = (): string => {
 const API_BASE_URL = getAPIBaseURL();
 
 console.log("🔗 API Base URL:", API_BASE_URL);
-console.log("🔗 Environment VITE_API_URL:", (import.meta as any).env?.VITE_API_URL);
+console.log(
+  "🔗 Environment VITE_API_URL:",
+  (import.meta as any).env?.VITE_API_URL,
+);
 console.log("🔗 Full Save URL would be:", `${API_BASE_URL}/api/profiles`);
 
 export const backendAPI = {
@@ -49,7 +52,10 @@ export const backendAPI = {
         console.log("✓ Profile saved to backend");
         return true;
       } else {
-        console.error(`❌ Backend returned ${response.status}:`, await response.text());
+        console.error(
+          `❌ Backend returned ${response.status}:`,
+          await response.text(),
+        );
         return false;
       }
     } catch (err) {

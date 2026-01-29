@@ -1,91 +1,47 @@
-const express = require("express");
-const cors = require("cors");
-const fs = require("fs");
-const path = require("path");
+import express from "express";
+import cors from "cors";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Middleware
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type"],
-  }),
-);
+app.use(cors());
 app.use(express.json());
 
-// Data file path (works both locally and on cloud)
-const dataFile = path.join(__dirname, "profiles.json");
+// Profiles storage file
+const profilesFile = path.join(__dirname, "profiles.json");
 
-// Helper: Load profiles from file
-const loadProfiles = () => {
+// Initialize profiles file if it doesn't exist
+if (!fs.existsSync(profilesFile)) {
+  fs.writeFileSync(profilesFile, JSON.stringify([]));
+}
+
+// Helper functions
+const readProfiles = () => {
   try {
-    if (fs.existsSync(dataFile)) {
-      return JSON.parse(fs.readFileSync(dataFile, "utf8"));
-    }
+    const data = fs.readFileSync(profilesFile, "utf-8");
+    return JSON.parse(data);
   } catch (err) {
-    console.error("Error loading profiles:", err);
+    console.error("Error reading profiles:", err);
+    return [];
   }
-  return {};
 };
 
-// Helper: Save profiles to file
-const saveProfiles = (profiles) => {
+const writeProfiles = (profiles) => {
   try {
-    fs.writeFileSync(dataFile, JSON.stringify(profiles, null, 2), "utf8");
+    fs.writeFileSync(profilesFile, JSON.stringify(profiles, null, 2));
   } catch (err) {
-    console.error("Error saving profiles:", err);
+    console.error("Error writing profiles:", err);
   }
 };
 
 // Routes
-
-// Get single profile by ID
-app.get("/api/profiles/:id", (req, res) => {
-  const profiles = loadProfiles();
-  const profile = profiles[req.params.id];
-
-  if (profile) {
-    console.log(`✓ Profile fetched: ${req.params.id}`);
-    res.json(profile);
-  } else {
-    console.log(`✗ Profile not found: ${req.params.id}`);
-    res.status(404).json({ error: "Profile not found" });
-  }
-});
-
-// Get all profiles (public directory)
-app.get("/api/profiles", (req, res) => {
-  const profiles = loadProfiles();
-  const profileList = Object.values(profiles).sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  );
-  res.json(profileList);
-});
-
-// Save or update profile
-app.post("/api/profiles", (req, res) => {
-  try {
-    const { id } = req.body;
-    if (!id) {
-      return res.status(400).json({ error: "Profile ID required" });
-    }
-
-    const profiles = loadProfiles();
-    profiles[id] = { ...req.body, updatedAt: new Date().toISOString() };
-    saveProfiles(profiles);
-
-    console.log(`✓ Profile saved: ${id}`);
-    res.json({ success: true, profile: profiles[id] });
-  } catch (err) {
-    console.error("Error saving profile:", err);
-    res.status(500).json({ error: "Failed to save profile" });
-  }
-});
-
-// Health check
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
@@ -94,27 +50,55 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Root endpoint
-app.get("/", (req, res) => {
-  res.json({
-    message: "QRSync Backend API",
-    endpoints: {
-      health: "/api/health",
-      getProfile: "/api/profiles/:id",
-      allProfiles: "/api/profiles",
-      saveProfile: "POST /api/profiles",
-    },
-  });
+app.post("/api/profiles", (req, res) => {
+  try {
+    const profile = req.body;
+    const profiles = readProfiles();
+
+    // Find and update or create new
+    const index = profiles.findIndex((p) => p.id === profile.id);
+    if (index >= 0) {
+      profiles[index] = profile;
+    } else {
+      profiles.push(profile);
+    }
+
+    writeProfiles(profiles);
+    res.json({ success: true, profile });
+  } catch (err) {
+    console.error("Error saving profile:", err);
+    res.status(500).json({ error: "Failed to save profile" });
+  }
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: "Endpoint not found" });
+app.get("/api/profiles/:id", (req, res) => {
+  try {
+    const profiles = readProfiles();
+    const profile = profiles.find((p) => p.id === req.params.id);
+
+    if (profile) {
+      res.json(profile);
+    } else {
+      res.status(404).json({ error: "Profile not found" });
+    }
+  } catch (err) {
+    console.error("Error fetching profile:", err);
+    res.status(500).json({ error: "Failed to fetch profile" });
+  }
+});
+
+app.get("/api/profiles", (req, res) => {
+  try {
+    const profiles = readProfiles();
+    res.json(profiles);
+  } catch (err) {
+    console.error("Error fetching profiles:", err);
+    res.status(500).json({ error: "Failed to fetch profiles" });
+  }
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`\n🚀 QRSync Backend Server running on port ${PORT}`);
-  console.log(`� Public URL: https://your-app-url.com:${PORT}`);
-  console.log(`\n📂 Profiles stored in: ${dataFile}\n`);
+  console.log(`✓ Server running on port ${PORT}`);
+  console.log(`✓ API Health: http://localhost:${PORT}/api/health`);
 });
