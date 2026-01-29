@@ -13,15 +13,23 @@ const PORT = process.env.PORT || 4000;
 // CORS Configuration - Allow all origins
 const corsOptions = {
   origin: "*", // Allow all origins
-  methods: ["GET", "POST", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: false,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
 // Middleware
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions)); // Enable preflight for all routes
 app.use(express.json());
+
+// Add logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
 
 // Profiles storage file
 const profilesFile = path.join(__dirname, "profiles.json");
@@ -51,6 +59,20 @@ const writeProfiles = (profiles) => {
 };
 
 // Routes
+
+// Root route for debugging
+app.get("/", (req, res) => {
+  res.json({
+    message: "QRSync Backend API",
+    status: "online",
+    endpoints: {
+      health: "/api/health",
+      profiles: "/api/profiles",
+      profile: "/api/profiles/:id"
+    }
+  });
+});
+
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
@@ -107,7 +129,24 @@ app.get("/api/profiles", (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`✓ Server running on port ${PORT}`);
   console.log(`✓ API Health: http://localhost:${PORT}/api/health`);
+  console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`✓ CORS enabled for all origins`);
+});
+
+// Handle server errors
+server.on('error', (err) => {
+  console.error('❌ Server error:', err);
+  process.exit(1);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully...');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });
