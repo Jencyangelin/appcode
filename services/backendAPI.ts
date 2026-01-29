@@ -13,12 +13,12 @@ const getAPIBaseURL = (): string => {
   // For production - use your deployed backend URL
   const apiUrl =
     (import.meta as any).env?.VITE_API_URL || "http://localhost:4000";
-  
+
   // Ensure it has https://
   if (apiUrl && !apiUrl.startsWith("http")) {
     return `https://${apiUrl}`;
   }
-  
+
   return apiUrl;
 };
 
@@ -35,16 +35,16 @@ export const backendAPI = {
     try {
       const url = `${API_BASE_URL}/api/profiles/${id}`;
       console.log("🔍 Fetching profile from:", url);
-      
+
       const response = await fetch(url);
       console.log("📨 Response status:", response.status);
-      
+
       if (response.ok) {
         const profile = await response.json();
         console.log("✅ Profile loaded from backend:", profile);
         return profile;
       }
-      
+
       console.warn("⚠️ Profile not found on backend (404)");
       return null;
     } catch (err) {
@@ -58,7 +58,7 @@ export const backendAPI = {
       const url = `${API_BASE_URL}/api/profiles`;
       console.log("💾 Saving profile to backend:", url);
       console.log("📦 Profile data:", profile);
-      
+
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -66,7 +66,7 @@ export const backendAPI = {
       });
 
       console.log("📨 Save response status:", response.status);
-      
+
       if (response.ok) {
         const data = await response.json();
         console.log("✅ Profile saved to backend successfully!");
@@ -87,7 +87,7 @@ export const backendAPI = {
     try {
       const url = `${API_BASE_URL}/api/profiles`;
       console.log("🔍 Fetching all profiles from:", url);
-      
+
       const response = await fetch(url);
       if (response.ok) {
         const profiles = await response.json();
@@ -105,16 +105,16 @@ export const backendAPI = {
     try {
       const url = `${API_BASE_URL}/api/health`;
       console.log("🏥 Checking backend health:", url);
-      
+
       const response = await fetch(url);
       const isOk = response.ok;
-      
+
       if (isOk) {
         console.log("✅ Backend is online!");
       } else {
         console.warn("⚠️ Backend health check failed:", response.status);
       }
-      
+
       return isOk;
     } catch (err) {
       console.error("❌ Backend health check error:", err);

@@ -17,7 +17,7 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: false,
   preflightContinue: false,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 204,
 };
 
 // Middleware
@@ -67,8 +67,8 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "/api/health",
       profiles: "/api/profiles",
-      profile: "/api/profiles/:id"
-    }
+      profile: "/api/profiles/:id",
+    },
   });
 });
 
@@ -128,24 +128,24 @@ app.get("/api/profiles", (req, res) => {
 });
 
 // Start server
-const server = app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`✓ Server running on port ${PORT}`);
   console.log(`✓ API Health: http://localhost:${PORT}/api/health`);
-  console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`✓ Environment: ${process.env.NODE_ENV || "development"}`);
   console.log(`✓ CORS enabled for all origins`);
 });
 
 // Handle server errors
-server.on('error', (err) => {
-  console.error('❌ Server error:', err);
+server.on("error", (err) => {
+  console.error("❌ Server error:", err);
   process.exit(1);
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully...');
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received, shutting down gracefully...");
   server.close(() => {
-    console.log('Server closed');
+    console.log("Server closed");
     process.exit(0);
   });
 });
