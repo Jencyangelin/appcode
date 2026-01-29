@@ -7,6 +7,8 @@ import {
   Linkedin,
   Twitter,
   Github,
+  Instagram,
+  Facebook,
   UserPlus,
   Share2,
   MoreHorizontal,
@@ -134,7 +136,9 @@ const PublicCard: React.FC = () => {
   const hasSocials =
     profile.socials.linkedin ||
     profile.socials.twitter ||
-    profile.socials.github;
+    profile.socials.github ||
+    profile.socials.instagram ||
+    profile.socials.facebook;
 
   return (
     <div className="min-h-screen bg-[#020617] text-white flex items-center justify-center p-0 sm:p-6 overflow-x-hidden selection:bg-indigo-500/30">
@@ -279,6 +283,20 @@ const PublicCard: React.FC = () => {
                       href={profile.socials.github}
                       icon={<Github className="w-6 h-6" />}
                       color="hover:text-white"
+                    />
+                  )}
+                  {profile.socials.instagram && (
+                    <SocialLink
+                      href={profile.socials.instagram}
+                      icon={<Instagram className="w-6 h-6" />}
+                      color="hover:text-pink-400"
+                    />
+                  )}
+                  {profile.socials.facebook && (
+                    <SocialLink
+                      href={profile.socials.facebook}
+                      icon={<Facebook className="w-6 h-6" />}
+                      color="hover:text-blue-500"
                     />
                   )}
                 </div>

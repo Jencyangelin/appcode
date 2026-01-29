@@ -19,5 +19,26 @@
     },
     "avatarUrl": "https://picsum.photos/seed/usr_yjcvb2o6n/400",
     "createdAt": "2026-01-29T13:18:14.506Z"
+  },
+  {
+    "id": "usr_dminkr5bd",
+    "fullName": "w",
+    "jobTitle": "w",
+    "company": "w",
+    "industry": "w",
+    "skills": "w",
+    "email": "we@gmail.com",
+    "phone": "w",
+    "website": "w",
+    "bio": "www",
+    "socials": {
+      "linkedin": "w",
+      "twitter": "w",
+      "github": "w",
+      "instagram": "w",
+      "facebook": "w"
+    },
+    "avatarUrl": "https://picsum.photos/seed/usr_dminkr5bd/400",
+    "createdAt": "2026-01-29T15:19:44.150Z"
   }
 ]
