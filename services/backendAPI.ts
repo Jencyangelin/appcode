@@ -11,9 +11,14 @@ const getAPIBaseURL = (): string => {
   }
 
   // For production - use your deployed backend URL
-  // Change this to your actual backend server URL
   const apiUrl =
     (import.meta as any).env?.VITE_API_URL || "http://localhost:4000";
+  
+  // Ensure it has https://
+  if (apiUrl && !apiUrl.startsWith("http")) {
+    return `https://${apiUrl}`;
+  }
+  
   return apiUrl;
 };
 
@@ -24,69 +29,95 @@ console.log(
   "🔗 Environment VITE_API_URL:",
   (import.meta as any).env?.VITE_API_URL,
 );
-console.log("🔗 Full Save URL would be:", `${API_BASE_URL}/api/profiles`);
 
 export const backendAPI = {
   async getProfile(id: string): Promise<UserProfile | null> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/profiles/${id}`);
+      const url = `${API_BASE_URL}/api/profiles/${id}`;
+      console.log("🔍 Fetching profile from:", url);
+      
+      const response = await fetch(url);
+      console.log("📨 Response status:", response.status);
+      
       if (response.ok) {
-        return await response.json();
+        const profile = await response.json();
+        console.log("✅ Profile loaded from backend:", profile);
+        return profile;
       }
+      
+      console.warn("⚠️ Profile not found on backend (404)");
       return null;
     } catch (err) {
-      console.error("❌ Failed to fetch profile from backend:", err);
+      console.error("❌ Backend fetch error:", err);
       return null;
     }
   },
 
   async saveProfile(profile: UserProfile): Promise<boolean> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/profiles`, {
+      const url = `${API_BASE_URL}/api/profiles`;
+      console.log("💾 Saving profile to backend:", url);
+      console.log("📦 Profile data:", profile);
+      
+      const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(profile),
       });
 
+      console.log("📨 Save response status:", response.status);
+      
       if (response.ok) {
-        console.log("✓ Profile saved to backend");
+        const data = await response.json();
+        console.log("✅ Profile saved to backend successfully!");
+        console.log("📋 Response:", data);
         return true;
       } else {
-        console.error(
-          `❌ Backend returned ${response.status}:`,
-          await response.text(),
-        );
+        const error = await response.text();
+        console.error("❌ Backend save failed:", response.status, error);
         return false;
       }
     } catch (err) {
-      console.error("❌ Failed to save profile to backend:", err);
+      console.error("❌ Backend save error:", err);
       return false;
     }
   },
 
   async getAllProfiles(): Promise<UserProfile[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/profiles`);
+      const url = `${API_BASE_URL}/api/profiles`;
+      console.log("🔍 Fetching all profiles from:", url);
+      
+      const response = await fetch(url);
       if (response.ok) {
-        return await response.json();
+        const profiles = await response.json();
+        console.log("✅ Profiles loaded:", profiles);
+        return profiles;
       }
       return [];
     } catch (err) {
-      console.error("❌ Failed to fetch profiles from backend:", err);
+      console.error("❌ Error fetching profiles:", err);
       return [];
     }
   },
 
   async checkHealth(): Promise<boolean> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/health`);
-      if (response.ok) {
-        console.log("✓ Backend is online");
-        return true;
+      const url = `${API_BASE_URL}/api/health`;
+      console.log("🏥 Checking backend health:", url);
+      
+      const response = await fetch(url);
+      const isOk = response.ok;
+      
+      if (isOk) {
+        console.log("✅ Backend is online!");
+      } else {
+        console.warn("⚠️ Backend health check failed:", response.status);
       }
-      return false;
+      
+      return isOk;
     } catch (err) {
-      console.error("❌ Backend is offline:", err);
+      console.error("❌ Backend health check error:", err);
       return false;
     }
   },

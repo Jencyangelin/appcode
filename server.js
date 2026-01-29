@@ -10,8 +10,17 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// CORS Configuration - Allow all origins
+const corsOptions = {
+  origin: "*", // Allow all origins
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false,
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // Enable preflight for all routes
 app.use(express.json());
 
 // Profiles storage file

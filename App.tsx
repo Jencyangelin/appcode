@@ -17,6 +17,66 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : null;
   });
 
+  // Debug: Expose storage info to window for console access
+  useEffect(() => {
+    (window as any).debugStorage = {
+      checkProfiles: () => {
+        console.log("=== LOCAL STORAGE DEBUG ===");
+        const allKeys = Object.keys(localStorage);
+        console.log("All localStorage keys:", allKeys);
+        
+        // Check for profile keys
+        allKeys.forEach(key => {
+          if (key.includes('profile') || key.includes('qrsync')) {
+            try {
+              const value = localStorage.getItem(key);
+              console.log(`✓ ${key}:`, JSON.parse(value!));
+            } catch (e) {
+              const val = localStorage.getItem(key);
+              console.log(`✓ ${key}:`, val);
+            }
+          }
+        });
+
+        // Check for user
+        const userStr = localStorage.getItem('qrsync_user');
+        console.log("User ID:", userStr ? JSON.parse(userStr).id : "No user");
+        
+        return {
+          allKeys,
+          user: userStr ? JSON.parse(userStr) : null,
+          profiles: allKeys
+            .filter(k => k.includes('profile'))
+            .map(k => ({ key: k, value: JSON.parse(localStorage.getItem(k)!) }))
+        };
+      },
+      getUserId: () => {
+        const userStr = localStorage.getItem('qrsync_user');
+        return userStr ? JSON.parse(userStr).id : null;
+      },
+      getProfile: (id?: string) => {
+        const userId = id || (window as any).debugStorage.getUserId();
+        const key = `profile_${userId}`;
+        const value = localStorage.getItem(key);
+        console.log(`Getting profile with key: ${key}`);
+        console.log("Value:", value ? JSON.parse(value) : "NOT FOUND");
+        return value ? JSON.parse(value) : null;
+      },
+      clearAllProfiles: () => {
+        const allKeys = Object.keys(localStorage);
+        allKeys.forEach(key => {
+          if (key.includes('profile')) {
+            localStorage.removeItem(key);
+            console.log(`Deleted: ${key}`);
+          }
+        });
+        console.log("All profiles cleared");
+      }
+    };
+    
+    console.log("🔍 Debug storage available - Use: window.debugStorage.checkProfiles()");
+  }, []);
+
   const handleLogin = (newUser: User) => {
     setUser(newUser);
     localStorage.setItem('qrsync_user', JSON.stringify(newUser));
