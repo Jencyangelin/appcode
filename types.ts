@@ -14,6 +14,8 @@ export interface UserProfile {
     linkedin?: string;
     twitter?: string;
     github?: string;
+    instagram?: string;
+    facebook?: string;
   };
   avatarUrl: string;
   createdAt: string;

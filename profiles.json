@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "id": "usr_yjcvb2o6n",
+    "fullName": "xc",
+    "jobTitle": "dsa",
+    "company": "a",
+    "industry": "a",
+    "skills": "a",
+    "email": "ren@gmail.com",
+    "phone": "6374881316",
+    "website": "s",
+    "bio": "a",
+    "socials": {
+      "linkedin": "s",
+      "twitter": "s",
+      "github": "s",
+      "instagram": "s",
+      "facebook": "s"
+    },
+    "avatarUrl": "https://picsum.photos/seed/usr_yjcvb2o6n/400",
+    "createdAt": "2026-01-29T13:18:14.506Z"
+  }
+]

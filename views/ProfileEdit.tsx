@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Briefcase, Building, Mail, Phone, Globe, Linkedin, Twitter, Github, Save, Sparkles, Loader2, Award, Target } from 'lucide-react';
+import { User, Briefcase, Building, Mail, Phone, Globe, Linkedin, Twitter, Github, Instagram, Facebook, Save, Sparkles, Loader2, Award, Target } from 'lucide-react';
 import { profileService } from '../services/profileService';
 import { enhanceBio } from '../services/geminiService';
 import { UserProfile } from '../types';
@@ -25,7 +25,7 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ user }) => {
     phone: '',
     website: '',
     bio: '',
-    socials: { linkedin: '', twitter: '', github: '' },
+    socials: { linkedin: '', twitter: '', github: '', instagram: '', facebook: '' },
     avatarUrl: `https://picsum.photos/seed/${user.id}/400`,
   });
 
@@ -228,15 +228,65 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ user }) => {
                 placeholder="Portfolio or Website URL"
               />
             </div>
-            <div className="relative group">
-              <Linkedin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-indigo-500 transition-colors" />
-              <input 
-                name="social_linkedin"
-                value={formData.socials.linkedin}
-                onChange={handleChange}
-                className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium"
-                placeholder="LinkedIn Profile URL"
-              />
+          </div>
+
+          {/* Social Media Fields */}
+          <div className="mt-8">
+            <h3 className="text-lg font-bold mb-6 text-slate-700 flex items-center space-x-2">
+              <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
+              <span>Social Media Profiles</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="relative group">
+                <Linkedin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-indigo-500 transition-colors" />
+                <input 
+                  name="social_linkedin"
+                  value={formData.socials.linkedin}
+                  onChange={handleChange}
+                  className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium"
+                  placeholder="LinkedIn Profile URL"
+                />
+              </div>
+              <div className="relative group">
+                <Twitter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-indigo-500 transition-colors" />
+                <input 
+                  name="social_twitter"
+                  value={formData.socials.twitter}
+                  onChange={handleChange}
+                  className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium"
+                  placeholder="Twitter Profile URL"
+                />
+              </div>
+              <div className="relative group">
+                <Github className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-indigo-500 transition-colors" />
+                <input 
+                  name="social_github"
+                  value={formData.socials.github}
+                  onChange={handleChange}
+                  className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium"
+                  placeholder="GitHub Profile URL"
+                />
+              </div>
+              <div className="relative group">
+                <Instagram className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-indigo-500 transition-colors" />
+                <input 
+                  name="social_instagram"
+                  value={formData.socials.instagram}
+                  onChange={handleChange}
+                  className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium"
+                  placeholder="Instagram Profile URL"
+                />
+              </div>
+              <div className="relative group">
+                <Facebook className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-indigo-500 transition-colors" />
+                <input 
+                  name="social_facebook"
+                  value={formData.socials.facebook}
+                  onChange={handleChange}
+                  className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium"
+                  placeholder="Facebook Profile URL"
+                />
+              </div>
             </div>
           </div>
         </div>
