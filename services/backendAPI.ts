@@ -12,7 +12,7 @@ const getAPIBaseURL = (): string => {
 
   // For production - use your deployed backend URL
   const apiUrl =
-    (import.meta as any).env?.VITE_API_URL || "http://localhost:4000";
+    (import.meta as any).env?.VITE_API_URL || "https://appcode-tck1.onrender.com";
 
   // Ensure it has https://
   if (apiUrl && !apiUrl.startsWith("http")) {

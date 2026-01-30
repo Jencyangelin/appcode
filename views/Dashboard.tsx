@@ -38,15 +38,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
 
   // Simple QR format - just the URL, no embedded data
   const getCardQRData = () => {
-    // Use the public app URL with the user ID
-    return `${window.location.origin}/#/card/${user.id}`;
+    // Use the production app URL with the user ID
+    return `https://url-profile-app.vercel.app/#/card/${user.id}`;
   };
 
   // Fallback URL for web sharing
   const getCardUrl = () => {
-    const baseUrl = window.location.href.split("#")[0];
-    const cleanBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-    return `${cleanBase}#/card/${user.id}`;
+    // Always use the production URL
+    return `https://url-profile-app.vercel.app/#/card/${user.id}`;
   };
 
   const cardUrl = getCardUrl();
