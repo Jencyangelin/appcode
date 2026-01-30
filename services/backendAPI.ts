@@ -29,6 +29,8 @@ console.log(
   "🔗 Environment VITE_API_URL:",
   (import.meta as any).env?.VITE_API_URL,
 );
+console.log("🌐 Current hostname:", window.location.hostname);
+console.log("📍 Current origin:", window.location.origin);
 
 export const backendAPI = {
   async getProfile(id: string): Promise<UserProfile | null> {
@@ -58,14 +60,18 @@ export const backendAPI = {
       const url = `${API_BASE_URL}/api/profiles`;
       console.log("💾 Saving profile to backend:", url);
       console.log("📦 Profile data:", profile);
+      console.log("🌐 Using origin:", window.location.origin);
 
       const response = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         body: JSON.stringify(profile),
       });
 
-      console.log("📨 Save response status:", response.status);
+      console.log("📨 Save response status:", response.status, response.statusText);
 
       if (response.ok) {
         const data = await response.json();
@@ -75,10 +81,15 @@ export const backendAPI = {
       } else {
         const error = await response.text();
         console.error("❌ Backend save failed:", response.status, error);
+        console.error("❌ API URL attempted:", url);
         return false;
       }
     } catch (err) {
       console.error("❌ Backend save error:", err);
+      console.error("❌ Could not connect to backend. Check if:");
+      console.error("   - Backend URL is correct:", API_BASE_URL);
+      console.error("   - Backend is running and accessible");
+      console.error("   - CORS is properly configured");
       return false;
     }
   },

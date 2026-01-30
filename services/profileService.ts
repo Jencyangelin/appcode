@@ -3,33 +3,33 @@ import { backendAPI } from "./backendAPI";
 
 export const profileService = {
   async saveProfile(profile: UserProfile): Promise<void> {
-    // Try backend first
+    // Save to backend ONLY (no localStorage fallback for production)
+    console.log("📤 Attempting to save profile to backend...");
     const backendSuccess = await backendAPI.saveProfile(profile);
 
-    // Fallback to localStorage
     if (!backendSuccess) {
-      const profiles = this.getAllProfiles();
-      profiles[profile.id] = profile;
-      localStorage.setItem("qrsync_profiles", JSON.stringify(profiles));
-      console.log("Profile saved to localStorage (backend unavailable)");
-    } else {
-      console.log("Profile saved to backend");
+      console.error("❌ CRITICAL: Failed to save profile to backend!");
+      throw new Error("Backend save failed - please check your API connection");
     }
+
+    console.log("✅ Profile saved to backend successfully");
   },
 
   async getProfile(id: string): Promise<UserProfile | null> {
-    // Try backend first
+    // Always try backend first for public cards
+    console.log(`🔍 Fetching profile ${id} from backend...`);
     let profile = await backendAPI.getProfile(id);
 
-    // Fallback to localStorage
+    // Only fallback to localStorage as emergency cache
     if (!profile) {
+      console.warn("⚠️ Backend unavailable, checking localStorage cache...");
       const profiles = this.getAllProfiles();
       profile = profiles[id] || null;
       if (profile) {
-        console.log("Profile loaded from localStorage (backend unavailable)");
+        console.warn("⚠️ Using cached profile from localStorage");
       }
     } else {
-      console.log("Profile loaded from backend");
+      console.log("✅ Profile loaded from backend successfully");
     }
 
     return profile;

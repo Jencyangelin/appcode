@@ -14,6 +14,7 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ user }) => {
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [enhancing, setEnhancing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<UserProfile, 'createdAt'>>({
     id: user.id,
     fullName: '',
@@ -68,13 +69,22 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ user }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setSaving(true);
-    await profileService.saveProfile({
-      ...formData,
-      createdAt: new Date().toISOString()
-    });
-    setSaving(false);
-    navigate('/dashboard');
+    try {
+      await profileService.saveProfile({
+        ...formData,
+        createdAt: new Date().toISOString()
+      });
+      setSaving(false);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error("Save error:", error);
+      setSaving(false);
+      const errorMsg = error instanceof Error ? error.message : "Failed to save profile";
+      setError(errorMsg);
+      alert("❌ " + errorMsg);
+    }
   };
 
   return (
